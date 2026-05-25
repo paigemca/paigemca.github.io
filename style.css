@@ -8,6 +8,8 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+html { scroll-behavior: smooth; }
+
 body {
     background: var(--bg);
     color: var(--text);
@@ -19,7 +21,7 @@ body {
 /* ── HEADER ── */
 header {
     text-align: center;
-    padding: 4rem 1rem 3rem;
+    padding: 4rem 1rem 1rem;
     border-bottom: 1px solid var(--border);
 }
 
@@ -77,6 +79,23 @@ header {
     transform-origin: center center;
 }
 
+/* ── NAV TABS ── */
+.section-tabs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4rem;
+    padding: 1rem 1.5rem 0;
+    margin-top: 1.5rem;
+}
+
+.tab-link {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+}
+
 /* ── MAIN ── */
 main {
     max-width: 900px;
@@ -84,7 +103,7 @@ main {
     padding: 3rem 1.5rem 5rem;
 }
 
-section { margin-bottom: 5rem; }
+section { margin-bottom: 3rem; }
 #concerts { margin-bottom: 1.5rem; }
 
 /* ── PLATFORM BLOCK ── */
@@ -283,6 +302,8 @@ section { margin-bottom: 5rem; }
 .game-mobile-tap { display: none; }
 
 @media (max-width: 768px) {
+    .section-tabs { display: none; }
+
     #concerts-carousel { padding: 0.5rem 0; }
 
     .game-embed-header { display: none; }
