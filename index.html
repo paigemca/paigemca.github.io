@@ -60,23 +60,13 @@
 
     <main>
 
-        <!-- ─── LISTENING ─── -->
-        <section id="listening">
-            <iframe
-                data-testid="embed-iframe"
-                style="border-radius:12px"
-                src="https://open.spotify.com/embed/playlist/7zYLc17Ogkgzu2Oo5Ua2OT?utm_source=generator"
-                width="100%"
-                height="352"
-                frameborder="0"
-                allowfullscreen
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy">
-            </iframe>
-        </section>
-
         <!-- ─── CONCERTS ─── -->
         <section id="concerts">
+            <div class="section-heading">
+                <div class="section-heading-wrap" data-size="1.7">
+                    <img src="assets/music.png" class="section-heading-img" alt="music">
+                </div>
+            </div>
             <div class="platform-block">
                 <div class="carousel" id="concerts-carousel">
                     <div class="slide active">
@@ -111,8 +101,51 @@
             </div>
         </section>
 
+        <!-- ─── LISTENING ─── -->
+        <section id="listening">
+            <iframe
+                data-testid="embed-iframe"
+                style="border-radius:12px"
+                src="https://open.spotify.com/embed/playlist/7zYLc17Ogkgzu2Oo5Ua2OT?utm_source=generator"
+                width="100%"
+                height="352"
+                frameborder="0"
+                allowfullscreen
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+            </iframe>
+        </section>
+
+        <!-- ─── READING ─── -->
+        <section id="reading">
+            <div class="section-heading">
+                <div class="section-heading-wrap" data-size="1.5">
+                    <img src="assets/recent.png" class="section-heading-img" alt="recent">
+                </div>
+                <div class="section-heading-wrap" data-size="1.5">
+                    <img src="assets/reads.png" class="section-heading-img" alt="reads">
+                </div>
+            </div>
+            <div class="platform-block">
+                <div class="carousel" id="books-carousel">
+                    <div class="carousel-controls">
+                        <button class="carousel-btn prev-btn">←</button>
+                        <div class="carousel-dots">
+                            <span class="dot active"></span>
+                        </div>
+                        <button class="carousel-btn next-btn">→</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- ─── SOCIALS ─── -->
         <section id="social">
+            <div class="section-heading">
+                <div class="section-heading-wrap" data-size="2.2">
+                    <img src="assets/boards.png" class="section-heading-img" alt="boards">
+                </div>
+            </div>
             <!-- Pinterest -->
             <div class="platform-block">
                 <div class="carousel">
@@ -154,27 +187,14 @@
             </div>
         </section>
 
-        <!-- ─── READING ─── -->
-        <section id="reading">
-            <div class="platform-block">
-                <div class="carousel" id="books-carousel">
-                    <div class="carousel-controls">
-                        <button class="carousel-btn prev-btn">←</button>
-                        <div class="carousel-dots">
-                            <span class="dot active"></span>
-                        </div>
-                        <button class="carousel-btn next-btn">→</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- ─── ARCADE ─── -->
         <section id="arcade">
-            <div class="game-embed-block">
-                <div class="game-embed-header">
-                    <a href="https://paigemca.github.io/heavyrain/heavyrain.html" target="_blank" rel="noopener" class="fullscreen-link">play full screen →</a>
+            <div class="section-heading">
+                <div class="section-heading-wrap" data-size="2.2">
+                    <img src="assets/arcade.png" class="section-heading-img" alt="arcade">
                 </div>
+            </div>
+            <div class="game-embed-block">
                 <div class="game-frame-wrap">
                     <iframe
                         src="https://paigemca.github.io/heavyrain/heavyrain.html"
@@ -187,6 +207,7 @@
                         tap to play →
                     </a>
                 </div>
+                <a href="https://paigemca.github.io/heavyrain/heavyrain.html" target="_blank" rel="noopener" class="fullscreen-link">play full screen →</a>
             </div>
         </section>
 
@@ -306,6 +327,32 @@
             });
         }
         layoutPaintedTitle();
+
+        function layoutSectionHeadings() {
+            const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+            document.querySelectorAll('.section-heading-wrap').forEach(wrap => {
+                const img = wrap.querySelector('.section-heading-img');
+                const targetH = parseFloat(wrap.dataset.size || 2.2) * rem;
+                function apply() {
+                    const nW = img.naturalWidth, nH = img.naturalHeight;
+                    if (!nW) return;
+                    const imgW = targetH;
+                    const imgH = targetH * (nH / nW);
+                    wrap.style.width  = imgH + 'px';
+                    wrap.style.height = imgW + 'px';
+                    img.style.position = 'absolute';
+                    img.style.width    = imgW + 'px';
+                    img.style.height   = imgH + 'px';
+                    img.style.left     = ((imgH - imgW) / 2) + 'px';
+                    img.style.top      = ((imgW - imgH) / 2) + 'px';
+                }
+                if (img.complete && img.naturalWidth > 0) apply();
+                else img.addEventListener('load', apply);
+            });
+        }
+        layoutSectionHeadings();
+
         window.addEventListener('resize', layoutPaintedTitle);
 
     </script>

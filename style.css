@@ -85,6 +85,7 @@ main {
 }
 
 section { margin-bottom: 5rem; }
+#concerts { margin-bottom: 1.5rem; }
 
 /* ── PLATFORM BLOCK ── */
 .platform-block {
@@ -209,6 +210,35 @@ section { margin-bottom: 5rem; }
 }
 
 
+/* ── SECTION HEADING PLACEHOLDER ── */
+.section-heading-placeholder {
+    font-size: 1.7rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+}
+
+/* ── SECTION HEADINGS ── */
+.section-heading {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-heading-wrap {
+    position: relative;
+    overflow: visible;
+}
+
+.section-heading-img {
+    display: block;
+    mix-blend-mode: multiply;
+    transform: rotate(-90deg);
+    transform-origin: center center;
+}
+
 /* ── ARCADE ── */
 .game-embed-block {
     background: transparent;
@@ -226,6 +256,8 @@ section { margin-bottom: 5rem; }
 }
 
 .fullscreen-link {
+    display: inline-block;
+    margin-top: 0.6rem;
     font-size: 0.72rem;
     color: var(--muted);
     text-decoration: none;
