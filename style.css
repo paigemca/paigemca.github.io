@@ -84,15 +84,15 @@ main {
     padding: 3rem 1.5rem 5rem;
 }
 
-section { margin-bottom: 4rem; }
+section { margin-bottom: 5rem; }
 
 /* ── PLATFORM BLOCK ── */
 .platform-block {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 1.25rem;
-    overflow: hidden;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 0;
+    overflow: visible;
 }
 
 
@@ -145,7 +145,7 @@ section { margin-bottom: 4rem; }
 
 /* ── CAROUSEL ── */
 .carousel {
-    padding: 1rem 1.25rem 0.5rem;
+    padding: 0;
 }
 
 .slide {
@@ -161,26 +161,20 @@ section { margin-bottom: 4rem; }
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    padding: 0.75rem 0 0.25rem;
+    padding: 0.9rem 0 0;
 }
 
 .carousel-btn {
     background: none;
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    width: 2rem;
-    height: 2rem;
+    border: none;
+    padding: 0 0.25rem;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 1rem;
     color: var(--muted);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color 0.16s, color 0.16s;
+    transition: color 0.16s;
 }
 
 .carousel-btn:hover {
-    border-color: #b8b4ac;
     color: var(--text);
 }
 
@@ -196,20 +190,39 @@ section { margin-bottom: 4rem; }
 
 .dot.active { background: var(--muted); }
 
+/* ── CONCERTS ── */
+.video-wrap {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+
+.video-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+
 /* ── ARCADE ── */
 .game-embed-block {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
 }
 
 .game-embed-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0.9rem 1.25rem;
-    border-bottom: 1px solid var(--border);
+    justify-content: flex-end;
+    padding: 0 0 0.75rem;
+    border-bottom: none;
 }
 
 .fullscreen-link {
@@ -227,6 +240,8 @@ section { margin-bottom: 4rem; }
     width: 100%;
     height: 560px;
     border: none;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
 }
 
 .game-frame-wrap {
@@ -236,6 +251,8 @@ section { margin-bottom: 4rem; }
 .game-mobile-tap { display: none; }
 
 @media (max-width: 768px) {
+    #concerts-carousel { padding: 0.5rem 0; }
+
     .game-embed-header { display: none; }
 
     .game-mobile-tap {
