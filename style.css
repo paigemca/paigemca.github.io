@@ -1,0 +1,231 @@
+:root {
+    --bg:       #e8f2e9;
+    --surface:  #ffffff;
+    --text:     #2c2825;
+    --muted:    #9a9590;
+    --border:   #e5e2da;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+}
+
+/* ── HEADER ── */
+header {
+    text-align: center;
+    padding: 4rem 1rem 3rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.header-links {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.header-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--text);
+    transition: border-color 0.16s, box-shadow 0.16s;
+}
+
+.header-link svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.header-link:hover {
+    border-color: #b8b4ac;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.painted-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.title-word-wrap {
+    position: relative;
+    overflow: visible;
+    flex-shrink: 0;
+}
+
+.title-word-wrap:last-child {
+    margin-top: -0.6rem;
+}
+
+.title-word {
+    display: block;
+    mix-blend-mode: multiply;
+    transform: rotate(-90deg);
+    transform-origin: center center;
+}
+
+/* ── MAIN ── */
+main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+}
+
+section { margin-bottom: 4rem; }
+
+/* ── PLATFORM BLOCK ── */
+.platform-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+}
+
+
+
+
+/* ── BOOKS ── */
+.books-page {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.book-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: opacity 0.16s;
+}
+
+.book-card:hover { opacity: 0.75; }
+
+.book-card img {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    display: block;
+}
+
+.book-title {
+    font-size: 0.72rem;
+    line-height: 1.35;
+    color: var(--text);
+}
+
+.book-author {
+    font-size: 0.68rem;
+    color: var(--muted);
+}
+
+.books-error {
+    padding: 1rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+}
+
+/* ── CAROUSEL ── */
+.carousel {
+    padding: 1rem 1.25rem 0.5rem;
+}
+
+.slide {
+    display: none;
+    width: 100%;
+    overflow: hidden;
+}
+
+.slide.active { display: block; }
+
+.carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.75rem 0 0.25rem;
+}
+
+.carousel-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.16s, color 0.16s;
+}
+
+.carousel-btn:hover {
+    border-color: #b8b4ac;
+    color: var(--text);
+}
+
+.carousel-dots { display: flex; gap: 0.4rem; align-items: center; }
+
+.dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.16s;
+}
+
+.dot.active { background: var(--muted); }
+
+/* ── ARCADE ── */
+.game-embed-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.game-embed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.fullscreen-link {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.16s;
+}
+
+.fullscreen-link:hover { color: var(--text); }
+
+.game-frame {
+    display: block;
+    width: 100%;
+    height: 560px;
+    border: none;
+}
+
