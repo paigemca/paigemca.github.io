@@ -251,6 +251,14 @@ section { margin-bottom: 3rem; }
     overflow: visible;
 }
 
+.section-subheading {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+    margin: 0 0 0.6rem;
+}
+
 .section-heading-img {
     display: block;
     mix-blend-mode: multiply;
