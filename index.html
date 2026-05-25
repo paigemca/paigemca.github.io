@@ -133,11 +133,18 @@
                 <div class="game-embed-header">
                     <a href="https://paigemca.github.io/heavyrain/heavyrain.html" target="_blank" rel="noopener" class="fullscreen-link">play full screen →</a>
                 </div>
-                <iframe
-                    src="https://paigemca.github.io/heavyrain/heavyrain.html"
-                    class="game-frame"
-                    allowfullscreen>
-                </iframe>
+                <div class="game-frame-wrap">
+                    <iframe
+                        src="https://paigemca.github.io/heavyrain/heavyrain.html"
+                        class="game-frame"
+                        allowfullscreen>
+                    </iframe>
+                    <a href="https://paigemca.github.io/heavyrain/heavyrain.html"
+                       target="_blank" rel="noopener"
+                       class="game-mobile-tap">
+                        tap to play →
+                    </a>
+                </div>
             </div>
         </section>
 
@@ -246,6 +253,7 @@
         }
         layoutPaintedTitle();
         window.addEventListener('resize', layoutPaintedTitle);
+
     </script>
 </body>
 </html>
