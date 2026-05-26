@@ -198,7 +198,19 @@
                     <img src="assets/books.png" class="section-heading-img" alt="books">
                 </div>
             </div>
-            <p class="section-subheading">recently read</p>
+            <p class="section-subheading">currently reading</p>
+            <div class="platform-block">
+                <div class="carousel" id="currently-reading-carousel">
+                    <div class="carousel-controls">
+                        <button class="carousel-btn prev-btn">←</button>
+                        <div class="carousel-dots">
+                            <span class="dot active"></span>
+                        </div>
+                        <button class="carousel-btn next-btn">→</button>
+                    </div>
+                </div>
+            </div>
+            <p class="section-subheading">recent reads</p>
             <div class="platform-block">
                 <div class="carousel" id="books-carousel">
                     <div class="carousel-controls">
@@ -293,7 +305,7 @@
         }
 
         // Init all static carousels (Pinterest, concerts)
-        document.querySelectorAll('.carousel:not(#books-carousel)').forEach(initCarousel);
+        document.querySelectorAll('.carousel:not(#books-carousel):not(#currently-reading-carousel)').forEach(initCarousel);
 
         function escHtml(s) {
             return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -354,6 +366,51 @@
         }
 
         loadBooks();
+
+        async function loadCurrentlyReading() {
+            const rss = 'https://www.goodreads.com/review/list_rss/76233379?shelf=currently-reading&per_page=4';
+            const url = 'https://corsproxy.io/?' + encodeURIComponent(rss);
+            const carousel = document.getElementById('currently-reading-carousel');
+            const dots = carousel.querySelector('.carousel-dots');
+            const controls = carousel.querySelector('.carousel-controls');
+
+            try {
+                const text = await fetch(url).then(r => r.text());
+                const doc  = new DOMParser().parseFromString(text, 'text/xml');
+                const items = Array.from(doc.querySelectorAll('item')).slice(0, 4);
+
+                const books = items.map(item => ({
+                    title:  (item.querySelector('title')?.textContent ?? '').replace(/\s*\(.*\)$/, ''),
+                    author: item.querySelector('author_name')?.textContent ?? '',
+                    cover:  item.querySelector('book_large_image_url')?.textContent ?? '',
+                    link:   item.querySelector('link')?.textContent ?? ''
+                }));
+
+                if (!books.length) {
+                    controls.insertAdjacentHTML('beforebegin',
+                        '<p class="books-error">Nothing currently reading.</p>');
+                    return;
+                }
+
+                const slide = document.createElement('div');
+                slide.className = 'slide active';
+                slide.innerHTML = `<div class="books-page">${books.map(b =>
+                    `<a href="${safeUrl(b.link)}" target="_blank" rel="noopener" class="book-card">
+                        <img src="${safeUrl(b.cover)}" alt="${escHtml(b.title)}" loading="lazy">
+                        <span class="book-title">${escHtml(b.title)}</span>
+                        <span class="book-author">${escHtml(b.author)}</span>
+                    </a>`
+                ).join('')}</div>`;
+                carousel.insertBefore(slide, controls);
+
+                initCarousel(carousel, { swipe: true });
+            } catch {
+                controls.insertAdjacentHTML('beforebegin',
+                    '<p class="books-error">Could not load books right now.</p>');
+            }
+        }
+
+        loadCurrentlyReading();
 
     </script>
 
