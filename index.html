@@ -266,6 +266,13 @@
         // Init all static carousels (Pinterest, concerts)
         document.querySelectorAll('.carousel:not(#books-carousel)').forEach(initCarousel);
 
+        function escHtml(s) {
+            return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+        function safeUrl(s) {
+            return /^https?:\/\//.test(s) ? s : '';
+        }
+
         // Books carousel — fetched from Goodreads RSS via CORS proxy
         async function loadBooks() {
             const rss   = 'https://www.goodreads.com/review/list_rss/76233379?shelf=read&sort=date_read&per_page=20';
@@ -295,10 +302,10 @@
                     const slide = document.createElement('div');
                     slide.className = 'slide' + (pi === 0 ? ' active' : '');
                     slide.innerHTML = `<div class="books-page">${page.map(b =>
-                        `<a href="${b.link}" target="_blank" rel="noopener" class="book-card">
-                            <img src="${b.cover}" alt="${b.title}" loading="lazy">
-                            <span class="book-title">${b.title}</span>
-                            <span class="book-author">${b.author}</span>
+                        `<a href="${safeUrl(b.link)}" target="_blank" rel="noopener" class="book-card">
+                            <img src="${safeUrl(b.cover)}" alt="${escHtml(b.title)}" loading="lazy">
+                            <span class="book-title">${escHtml(b.title)}</span>
+                            <span class="book-author">${escHtml(b.author)}</span>
                         </a>`
                     ).join('')}</div>`;
                     carousel.insertBefore(slide, controls);
