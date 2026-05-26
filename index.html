@@ -281,6 +281,10 @@
             const slides = carousel.querySelectorAll('.slide');
             const dots   = carousel.querySelectorAll('.dot');
             if (!slides.length) return;
+            if (slides.length === 1) {
+                carousel.querySelector('.carousel-controls').style.display = 'none';
+                return;
+            }
             let idx = 0;
             carousel.querySelector('.prev-btn').addEventListener('click', () => shift(-1));
             carousel.querySelector('.next-btn').addEventListener('click', () => shift(1));
@@ -314,26 +318,34 @@
             return /^https?:\/\//.test(s) ? s : '';
         }
 
-        // Books carousel — fetched from Goodreads RSS via CORS proxy
+        async function fetchShelf(shelf, limit, sort = '') {
+            const sortParam = sort ? `&sort=${sort}` : '';
+            const rss  = `https://www.goodreads.com/review/list_rss/76233379?shelf=${shelf}${sortParam}&per_page=${limit}`;
+            const text = await fetch('https://corsproxy.io/?' + encodeURIComponent(rss)).then(r => r.text());
+            const doc  = new DOMParser().parseFromString(text, 'text/xml');
+            return Array.from(doc.querySelectorAll('item')).slice(0, limit).map(item => ({
+                title:  (item.querySelector('title')?.textContent ?? '').replace(/\s*\(.*\)$/, ''),
+                author: item.querySelector('author_name')?.textContent ?? '',
+                cover:  item.querySelector('book_large_image_url')?.textContent ?? '',
+                link:   item.querySelector('link')?.textContent ?? ''
+            }));
+        }
+
+        function bookCard(b) {
+            return `<a href="${safeUrl(b.link)}" target="_blank" rel="noopener" class="book-card">
+                        <img src="${safeUrl(b.cover)}" alt="${escHtml(b.title)}" loading="lazy">
+                        <span class="book-title">${escHtml(b.title)}</span>
+                        <span class="book-author">${escHtml(b.author)}</span>
+                    </a>`;
+        }
+
         async function loadBooks() {
-            const rss   = 'https://www.goodreads.com/review/list_rss/76233379?shelf=read&sort=date_read&per_page=20';
-            const url   = 'https://corsproxy.io/?' + encodeURIComponent(rss);
             const carousel = document.getElementById('books-carousel');
-            const dots  = carousel.querySelector('.carousel-dots');
+            const dots     = carousel.querySelector('.carousel-dots');
             const controls = carousel.querySelector('.carousel-controls');
 
             try {
-                const text = await fetch(url).then(r => r.text());
-                const doc  = new DOMParser().parseFromString(text, 'text/xml');
-                const items = Array.from(doc.querySelectorAll('item'));
-
-                const books = items.slice(0, 20).map(item => ({
-                    title:  (item.querySelector('title')?.textContent ?? '').replace(/\s*\(.*\)$/, ''),
-                    author: item.querySelector('author_name')?.textContent ?? '',
-                    cover:  item.querySelector('book_large_image_url')?.textContent ?? '',
-                    link:   item.querySelector('link')?.textContent ?? ''
-                }));
-
+                const books = await fetchShelf('read', 20, 'date_read');
                 const PER_PAGE = 4;
                 const pages = [];
                 for (let i = 0; i < books.length; i += PER_PAGE) pages.push(books.slice(i, i + PER_PAGE));
@@ -342,13 +354,7 @@
                 pages.forEach((page, pi) => {
                     const slide = document.createElement('div');
                     slide.className = 'slide' + (pi === 0 ? ' active' : '');
-                    slide.innerHTML = `<div class="books-page">${page.map(b =>
-                        `<a href="${safeUrl(b.link)}" target="_blank" rel="noopener" class="book-card">
-                            <img src="${safeUrl(b.cover)}" alt="${escHtml(b.title)}" loading="lazy">
-                            <span class="book-title">${escHtml(b.title)}</span>
-                            <span class="book-author">${escHtml(b.author)}</span>
-                        </a>`
-                    ).join('')}</div>`;
+                    slide.innerHTML = `<div class="books-page">${page.map(bookCard).join('')}</div>`;
                     carousel.insertBefore(slide, controls);
 
                     if (pi > 0) {
@@ -365,26 +371,12 @@
             }
         }
 
-        loadBooks();
-
         async function loadCurrentlyReading() {
-            const rss = 'https://www.goodreads.com/review/list_rss/76233379?shelf=currently-reading&per_page=4';
-            const url = 'https://corsproxy.io/?' + encodeURIComponent(rss);
             const carousel = document.getElementById('currently-reading-carousel');
-            const dots = carousel.querySelector('.carousel-dots');
             const controls = carousel.querySelector('.carousel-controls');
 
             try {
-                const text = await fetch(url).then(r => r.text());
-                const doc  = new DOMParser().parseFromString(text, 'text/xml');
-                const items = Array.from(doc.querySelectorAll('item')).slice(0, 4);
-
-                const books = items.map(item => ({
-                    title:  (item.querySelector('title')?.textContent ?? '').replace(/\s*\(.*\)$/, ''),
-                    author: item.querySelector('author_name')?.textContent ?? '',
-                    cover:  item.querySelector('book_large_image_url')?.textContent ?? '',
-                    link:   item.querySelector('link')?.textContent ?? ''
-                }));
+                const books = await fetchShelf('currently-reading', 4);
 
                 if (!books.length) {
                     controls.insertAdjacentHTML('beforebegin',
@@ -394,13 +386,7 @@
 
                 const slide = document.createElement('div');
                 slide.className = 'slide active';
-                slide.innerHTML = `<div class="books-page">${books.map(b =>
-                    `<a href="${safeUrl(b.link)}" target="_blank" rel="noopener" class="book-card">
-                        <img src="${safeUrl(b.cover)}" alt="${escHtml(b.title)}" loading="lazy">
-                        <span class="book-title">${escHtml(b.title)}</span>
-                        <span class="book-author">${escHtml(b.author)}</span>
-                    </a>`
-                ).join('')}</div>`;
+                slide.innerHTML = `<div class="books-page">${books.map(bookCard).join('')}</div>`;
                 carousel.insertBefore(slide, controls);
 
                 initCarousel(carousel, { swipe: true });
@@ -410,6 +396,7 @@
             }
         }
 
+        loadBooks();
         loadCurrentlyReading();
 
     </script>
