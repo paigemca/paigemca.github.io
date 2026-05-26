@@ -141,7 +141,7 @@
         <!-- ─── READING ─── -->
         <section id="reading">
             <div class="section-heading">
-                <div class="section-heading-wrap" data-size="1.3">
+                <div class="section-heading-wrap" data-size="1.3" data-rotate="-84">
                     <img src="assets/books.png" class="section-heading-img" alt="books">
                 </div>
             </div>
@@ -162,7 +162,7 @@
         <!-- ─── SOCIALS ─── -->
         <section id="social">
             <div class="section-heading">
-                <div class="section-heading-wrap" data-size="1.8">
+                <div class="section-heading-wrap" data-size="1.8" data-rotate="-84">
                     <img src="assets/boards.png" class="section-heading-img" alt="boards">
                 </div>
             </div>
@@ -354,6 +354,7 @@
             document.querySelectorAll('.section-heading-wrap').forEach(wrap => {
                 const img = wrap.querySelector('.section-heading-img');
                 const targetH = parseFloat(wrap.dataset.size || 2.2) * rem;
+                const rotateDeg = parseFloat(wrap.dataset.rotate || -90);
                 function apply() {
                     const nW = img.naturalWidth, nH = img.naturalHeight;
                     if (!nW) return;
@@ -366,6 +367,7 @@
                     img.style.height   = imgH + 'px';
                     img.style.left     = ((imgH - imgW) / 2) + 'px';
                     img.style.top      = ((imgW - imgH) / 2) + 'px';
+                    img.style.transform = 'rotate(' + rotateDeg + 'deg)';
                 }
                 if (img.complete && img.naturalWidth > 0) apply();
                 else img.addEventListener('load', apply);
