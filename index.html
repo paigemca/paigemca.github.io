@@ -378,5 +378,20 @@
         window.addEventListener('resize', layoutPaintedTitle);
 
     </script>
+    <script>
+        fetch('https://xalsozgsdssqxzwikrdm.supabase.co/rest/v1/page_visits', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': '__SUPABASE_KEY__',
+                'Authorization': 'Bearer __SUPABASE_KEY__',
+                'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({
+                referrer: document.referrer || null,
+                user_agent: navigator.userAgent
+            })
+        });
+    </script>
 </body>
 </html>
