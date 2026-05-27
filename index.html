@@ -343,8 +343,9 @@
         }
 
         function bookCard(b) {
-            return `<a href="${safeUrl(b.link)}" target="_blank" rel="noopener" class="book-card">
-                        <img src="${safeUrl(b.cover)}" alt="${escHtml(b.title)}" loading="lazy">
+            const imgHtml = b.cover ? `<img src="${safeUrl(b.cover)}" alt="${escHtml(b.title)}" loading="lazy">` : '';
+        return `<a href="${safeUrl(b.link)}" target="_blank" rel="noopener" class="book-card">
+                        ${imgHtml}
                         <span class="book-title">${escHtml(b.title)}</span>
                         <span class="book-author">${escHtml(b.author)}</span>
                     </a>`;
@@ -357,6 +358,7 @@
 
             try {
                 const books = await fetchShelf('read', 20, 'date_read');
+                if (!books.length) return;
                 const PER_PAGE = 4;
                 const pages = [];
                 for (let i = 0; i < books.length; i += PER_PAGE) pages.push(books.slice(i, i + PER_PAGE));
@@ -467,6 +469,7 @@
         layoutSectionHeadings();
 
         window.addEventListener('resize', layoutPaintedTitle);
+        window.addEventListener('resize', layoutSectionHeadings);
 
     </script>
     <script>

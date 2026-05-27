@@ -107,17 +107,6 @@ section { margin-bottom: 3rem; }
 #concerts { margin-bottom: 1.5rem; }
 #concerts > iframe { margin-top: 1.5rem; }
 
-/* ── PLATFORM BLOCK ── */
-.platform-block {
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    margin-bottom: 0;
-    overflow: visible;
-}
-
-
-
 
 /* ── BOOKS ── */
 .books-page {
@@ -230,14 +219,6 @@ section { margin-bottom: 3rem; }
 }
 
 
-/* ── SECTION HEADING PLACEHOLDER ── */
-.section-heading-placeholder {
-    font-size: 1.7rem;
-    color: var(--muted);
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.05em;
-}
-
 /* ── SECTION HEADINGS ── */
 .section-heading {
     display: flex;
@@ -268,21 +249,6 @@ section { margin-bottom: 3rem; }
 }
 
 /* ── ARCADE ── */
-.game-embed-block {
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    overflow: visible;
-}
-
-.game-embed-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 0 0 0.75rem;
-    border-bottom: none;
-}
-
 .fullscreen-link {
     display: inline-block;
     margin-top: 0.6rem;
@@ -314,8 +280,6 @@ section { margin-bottom: 3rem; }
     .section-tabs { display: none; }
 
     #concerts-carousel { padding: 0.5rem 0; }
-
-    .game-embed-header { display: none; }
 
     .game-mobile-tap {
         display: flex;
