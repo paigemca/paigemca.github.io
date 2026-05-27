@@ -281,6 +281,8 @@ section { margin-bottom: 3rem; }
 
     #concerts-carousel { padding: 0.5rem 0; }
 
+    .fullscreen-link { display: none; }
+
     .game-mobile-tap {
         display: flex;
         position: absolute;
