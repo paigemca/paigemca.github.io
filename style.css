@@ -278,6 +278,7 @@ section { margin-bottom: 3rem; }
 
 @media (max-width: 768px) {
     .section-tabs { display: none; }
+    .section-heading { display: none; }
 
     #concerts-carousel { padding: 0.5rem 0; }
 
