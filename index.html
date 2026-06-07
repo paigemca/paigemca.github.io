@@ -89,6 +89,17 @@
                     <img src="assets/music.png" class="section-heading-img" alt="music">
                 </div>
             </div>
+            <iframe
+                data-testid="embed-iframe"
+                style="border-radius:12px"
+                src="https://open.spotify.com/embed/playlist/032mBLxQafvAP09ZkaZxpx?utm_source=generator"
+                width="100%"
+                height="352"
+                frameborder="0"
+                allowfullscreen
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+            </iframe>
             <div class="platform-block">
                 <div class="carousel" id="concerts-carousel">
                     <div class="slide active">
@@ -165,17 +176,6 @@
                     </div>
                 </div>
             </div>
-            <iframe
-                data-testid="embed-iframe"
-                style="border-radius:12px"
-                src="https://open.spotify.com/embed/playlist/032mBLxQafvAP09ZkaZxpx?utm_source=generator"
-                width="100%"
-                height="352"
-                frameborder="0"
-                allowfullscreen
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy">
-            </iframe>
         </section>
 
         <!-- ─── READING ─── -->
@@ -336,7 +336,20 @@
         }
 
         async function fetchShelf(shelf, limit, sort = '') {
-            const cacheKey = `gr_${shelf}_${limit}_${sort}`;
+            const sortParam = sort ? `&sort=${sort}` : '';
+            const rss  = `https://www.goodreads.com/review/list_rss/76233379?shelf=${shelf}${sortParam}&per_page=${limit}`;
+            const text = await fetch('https://corsproxy.io/?' + encodeURIComponent(rss)).then(r => r.text());
+            const doc  = new DOMParser().parseFromString(text, 'text/xml');
+            return Array.from(doc.querySelectorAll('item')).slice(0, limit).map(item => ({
+                title:  (item.querySelector('title')?.textContent ?? '').replace(/\s*\(.*\)$/, ''),
+                author: item.querySelector('author_name')?.textContent ?? '',
+                cover:  item.querySelector('book_large_image_url')?.textContent ?? '',
+                link:   item.querySelector('link')?.textContent ?? ''
+            }));
+        }
+
+        async function fetchAllBookData() {
+            const cacheKey = 'gr_books_all';
             try {
                 const cached = localStorage.getItem(cacheKey);
                 if (cached) {
@@ -345,16 +358,11 @@
                 }
             } catch {}
 
-            const sortParam = sort ? `&sort=${sort}` : '';
-            const rss  = `https://www.goodreads.com/review/list_rss/76233379?shelf=${shelf}${sortParam}&per_page=${limit}`;
-            const text = await fetch('https://corsproxy.io/?' + encodeURIComponent(rss)).then(r => r.text());
-            const doc  = new DOMParser().parseFromString(text, 'text/xml');
-            const data = Array.from(doc.querySelectorAll('item')).slice(0, limit).map(item => ({
-                title:  (item.querySelector('title')?.textContent ?? '').replace(/\s*\(.*\)$/, ''),
-                author: item.querySelector('author_name')?.textContent ?? '',
-                cover:  item.querySelector('book_large_image_url')?.textContent ?? '',
-                link:   item.querySelector('link')?.textContent ?? ''
-            }));
+            const [read, currentlyReading] = await Promise.all([
+                fetchShelf('read', 20, 'date_read'),
+                fetchShelf('currently-reading', 4)
+            ]);
+            const data = { read, currentlyReading };
             try { localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data })); } catch {}
             return data;
         }
@@ -368,69 +376,68 @@
                     </a>`;
         }
 
-        async function loadBooks() {
+        async function loadBooks(books) {
             const carousel = document.getElementById('books-carousel');
             const dots     = carousel.querySelector('.carousel-dots');
             const controls = carousel.querySelector('.carousel-controls');
 
-            try {
-                const books = await fetchShelf('read', 20, 'date_read');
-                if (!books.length) return;
-                const PER_PAGE = 4;
-                const pages = [];
-                for (let i = 0; i < books.length; i += PER_PAGE) pages.push(books.slice(i, i + PER_PAGE));
-                pages.splice(5);
+            if (!books.length) return;
+            const PER_PAGE = 4;
+            const pages = [];
+            for (let i = 0; i < books.length; i += PER_PAGE) pages.push(books.slice(i, i + PER_PAGE));
+            pages.splice(5);
 
-                pages.forEach((page, pi) => {
-                    const slide = document.createElement('div');
-                    slide.className = 'slide' + (pi === 0 ? ' active' : '');
-                    slide.innerHTML = `<div class="books-page">${page.map(bookCard).join('')}</div>`;
-                    carousel.insertBefore(slide, controls);
+            pages.forEach((page, pi) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide' + (pi === 0 ? ' active' : '');
+                slide.innerHTML = `<div class="books-page">${page.map(bookCard).join('')}</div>`;
+                carousel.insertBefore(slide, controls);
 
-                    if (pi > 0) {
-                        const dot = document.createElement('span');
-                        dot.className = 'dot';
-                        dots.appendChild(dot);
-                    }
-                });
+                if (pi > 0) {
+                    const dot = document.createElement('span');
+                    dot.className = 'dot';
+                    dots.appendChild(dot);
+                }
+            });
 
-                initCarousel(carousel, { swipe: true });
-            } catch {
-                controls.insertAdjacentHTML('beforebegin',
-                    '<p class="books-error">Could not load books right now.</p>');
-            }
+            initCarousel(carousel, { swipe: true });
         }
 
-        async function loadCurrentlyReading() {
+        function loadCurrentlyReading(books) {
             const carousel = document.getElementById('currently-reading-carousel');
             const controls = carousel.querySelector('.carousel-controls');
 
-            try {
-                const books = await fetchShelf('currently-reading', 4);
-
-                if (!books.length) {
-                    controls.insertAdjacentHTML('beforebegin',
-                        '<p class="books-error">Nothing currently reading.</p>');
-                    return;
-                }
-
-                const slide = document.createElement('div');
-                slide.className = 'slide active';
-                slide.innerHTML = `<div class="books-page">${books.map(bookCard).join('')}</div>`;
-                carousel.insertBefore(slide, controls);
-
-                initCarousel(carousel, { swipe: true });
-            } catch {
+            if (!books.length) {
                 controls.insertAdjacentHTML('beforebegin',
-                    '<p class="books-error">Could not load books right now.</p>');
+                    '<p class="books-error">Nothing currently reading.</p>');
+                return;
+            }
+
+            const slide = document.createElement('div');
+            slide.className = 'slide active';
+            slide.innerHTML = `<div class="books-page">${books.map(bookCard).join('')}</div>`;
+            carousel.insertBefore(slide, controls);
+
+            initCarousel(carousel, { swipe: true });
+        }
+
+        async function loadAllBooks() {
+            try {
+                const { read, currentlyReading } = await fetchAllBookData();
+                loadBooks(read);
+                loadCurrentlyReading(currentlyReading);
+            } catch {
+                document.getElementById('books-carousel').querySelector('.carousel-controls')
+                    .insertAdjacentHTML('beforebegin', '<p class="books-error">Could not load books right now.</p>');
+                document.getElementById('currently-reading-carousel').querySelector('.carousel-controls')
+                    .insertAdjacentHTML('beforebegin', '<p class="books-error">Could not load books right now.</p>');
             }
         }
 
         const readingObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
                 readingObserver.disconnect();
-                loadBooks();
-                loadCurrentlyReading();
+                loadAllBooks();
             }
         }, { rootMargin: '300px' });
         readingObserver.observe(document.getElementById('reading'));
