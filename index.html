@@ -103,7 +103,7 @@
                     </div>
                     <div class="slide">
                         <div class="video-wrap">
-                            <iframe src="https://www.youtube.com/embed/2Zj_0ZtPG2A?si=slUE8Xjm717ciytD&rel=0&playsinline=1"
+                            <iframe data-src="https://www.youtube.com/embed/2Zj_0ZtPG2A?si=slUE8Xjm717ciytD&rel=0&playsinline=1"
                                     frameborder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     referrerpolicy="strict-origin-when-cross-origin"
@@ -113,7 +113,7 @@
                     </div>
                     <div class="slide">
                         <div class="video-wrap">
-                            <iframe src="https://www.youtube.com/embed/IsknTnEhTKo?si=Wqv6yNcw-W35i6e3&rel=0&playsinline=1"
+                            <iframe data-src="https://www.youtube.com/embed/IsknTnEhTKo?si=Wqv6yNcw-W35i6e3&rel=0&playsinline=1"
                                     frameborder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     referrerpolicy="strict-origin-when-cross-origin"
@@ -123,7 +123,7 @@
                     </div>
                     <div class="slide">
                         <div class="video-wrap">
-                            <iframe src="https://www.youtube.com/embed/KckP6hKSvic?si=eJZeH-jvlphcWRVE&rel=0&playsinline=1"
+                            <iframe data-src="https://www.youtube.com/embed/KckP6hKSvic?si=eJZeH-jvlphcWRVE&rel=0&playsinline=1"
                                     frameborder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     referrerpolicy="strict-origin-when-cross-origin"
@@ -133,7 +133,7 @@
                     </div>
                     <div class="slide">
                         <div class="video-wrap">
-                            <iframe src="https://www.youtube.com/embed/v5O3zDLM7eo?si=6_at7s8pwgcyUm6K&rel=0&playsinline=1"
+                            <iframe data-src="https://www.youtube.com/embed/v5O3zDLM7eo?si=6_at7s8pwgcyUm6K&rel=0&playsinline=1"
                                     frameborder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     referrerpolicy="strict-origin-when-cross-origin"
@@ -143,7 +143,7 @@
                     </div>
                     <div class="slide">
                         <div class="video-wrap">
-                            <iframe src="https://www.youtube.com/embed/Ni6n1wDJYrg?si=l28RfaJfNelM60gs&rel=0&playsinline=1"
+                            <iframe data-src="https://www.youtube.com/embed/Ni6n1wDJYrg?si=l28RfaJfNelM60gs&rel=0&playsinline=1"
                                     frameborder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     referrerpolicy="strict-origin-when-cross-origin"
@@ -271,6 +271,7 @@
                     <iframe
                         src="https://paigemca.github.io/heavyrain/heavyrain.html"
                         class="game-frame"
+                        loading="lazy"
                         allowfullscreen>
                     </iframe>
                     <a href="https://paigemca.github.io/heavyrain/heavyrain.html"
@@ -310,11 +311,16 @@
                     if (Math.abs(dx) > 40) shift(dx < 0 ? 1 : -1);
                 });
             }
+            function activateSlide(slide) {
+                slide.classList.add('active');
+                const iframe = slide.querySelector('iframe[data-src]');
+                if (iframe) iframe.src = iframe.dataset.src;
+            }
             function shift(dir) {
                 slides[idx].classList.remove('active');
                 dots[idx].classList.remove('active');
                 idx = (idx + dir + slides.length) % slides.length;
-                slides[idx].classList.add('active');
+                activateSlide(slides[idx]);
                 dots[idx].classList.add('active');
             }
         }
@@ -330,16 +336,27 @@
         }
 
         async function fetchShelf(shelf, limit, sort = '') {
+            const cacheKey = `gr_${shelf}_${limit}_${sort}`;
+            try {
+                const cached = localStorage.getItem(cacheKey);
+                if (cached) {
+                    const { ts, data } = JSON.parse(cached);
+                    if (Date.now() - ts < 3_600_000) return data;
+                }
+            } catch {}
+
             const sortParam = sort ? `&sort=${sort}` : '';
             const rss  = `https://www.goodreads.com/review/list_rss/76233379?shelf=${shelf}${sortParam}&per_page=${limit}`;
             const text = await fetch('https://corsproxy.io/?' + encodeURIComponent(rss)).then(r => r.text());
             const doc  = new DOMParser().parseFromString(text, 'text/xml');
-            return Array.from(doc.querySelectorAll('item')).slice(0, limit).map(item => ({
+            const data = Array.from(doc.querySelectorAll('item')).slice(0, limit).map(item => ({
                 title:  (item.querySelector('title')?.textContent ?? '').replace(/\s*\(.*\)$/, ''),
                 author: item.querySelector('author_name')?.textContent ?? '',
                 cover:  item.querySelector('book_large_image_url')?.textContent ?? '',
                 link:   item.querySelector('link')?.textContent ?? ''
             }));
+            try { localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data })); } catch {}
+            return data;
         }
 
         function bookCard(b) {
@@ -409,8 +426,14 @@
             }
         }
 
-        loadBooks();
-        loadCurrentlyReading();
+        const readingObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                readingObserver.disconnect();
+                loadBooks();
+                loadCurrentlyReading();
+            }
+        }, { rootMargin: '300px' });
+        readingObserver.observe(document.getElementById('reading'));
 
     </script>
 
