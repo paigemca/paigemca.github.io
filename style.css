@@ -96,11 +96,31 @@ header {
     text-decoration: none;
 }
 
+.section-heading-wrap {
+    position: relative;
+    overflow: visible;
+}
+
+.section-subheading {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+    margin: 0 0 0.6rem;
+}
+
+.section-heading-img {
+    display: block;
+    mix-blend-mode: multiply;
+    transform: rotate(-90deg);
+    transform-origin: center center;
+}
+
 /* ── MAIN ── */
 main {
     max-width: 900px;
     margin: 0 auto;
-    padding: 3rem 1.5rem 5rem;
+    padding: 2rem 1.5rem 5rem;
 }
 
 section { margin-bottom: 3rem; }
@@ -219,35 +239,6 @@ section { margin-bottom: 3rem; }
 }
 
 
-/* ── SECTION HEADINGS ── */
-.section-heading {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
-}
-
-.section-heading-wrap {
-    position: relative;
-    overflow: visible;
-}
-
-.section-subheading {
-    font-size: 0.72rem;
-    color: var(--muted);
-    letter-spacing: 0.08em;
-    text-transform: lowercase;
-    margin: 0 0 0.6rem;
-}
-
-.section-heading-img {
-    display: block;
-    mix-blend-mode: multiply;
-    transform: rotate(-90deg);
-    transform-origin: center center;
-}
-
 /* ── ARCADE ── */
 .fullscreen-link {
     display: inline-block;
@@ -278,7 +269,6 @@ section { margin-bottom: 3rem; }
 
 @media (max-width: 768px) {
     .section-tabs { display: none; }
-    .section-heading { display: none; }
 
     #concerts-carousel { padding: 0.5rem 0; }
 
