@@ -320,7 +320,7 @@
                 fetchShelf('read', 20, 'date_read'),
                 fetchShelf('currently-reading', 4)
             ]);
-            const data = { read, currentlyReading };
+            const data = { read, currentlyReading: currentlyReading.filter(b => !read.some(r => r.link === b.link)) };
             try { localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data })); } catch {}
             return data;
         }
