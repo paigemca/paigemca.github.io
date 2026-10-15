@@ -79,41 +79,12 @@ header {
     transform-origin: center center;
 }
 
-/* ── NAV TABS ── */
-.section-tabs {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 4rem;
-    padding: 1rem 1.5rem 0;
-    margin-top: 1.5rem;
-}
-
-.tab-link {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    text-decoration: none;
-}
-
-.section-heading-wrap {
-    position: relative;
-    overflow: visible;
-}
-
 .section-subheading {
     font-size: 0.72rem;
     color: var(--muted);
     letter-spacing: 0.08em;
     text-transform: lowercase;
     margin: 0 0 0.6rem;
-}
-
-.section-heading-img {
-    display: block;
-    mix-blend-mode: multiply;
-    transform: rotate(-90deg);
-    transform-origin: center center;
 }
 
 /* ── MAIN ── */
@@ -268,8 +239,6 @@ section { margin-bottom: 3rem; }
 .game-mobile-tap { display: none; }
 
 @media (max-width: 768px) {
-    .section-tabs { display: none; }
-
     #concerts-carousel { padding: 0.5rem 0; }
 
     .fullscreen-link { display: none; }
